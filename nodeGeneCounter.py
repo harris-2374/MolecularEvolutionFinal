@@ -35,7 +35,7 @@ def main():
     )
     args = parser.parse_args()
     
-    --- Input Argparse Variables ---
+    # --- Input Argparse Variables ---
     """
     We need a way to tie the inputs provided
     by the user to something we can use and 

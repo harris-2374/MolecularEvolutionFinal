@@ -59,7 +59,7 @@ def getFileChunks(INPUT, fileChunkOutput):
                     try:
                         df = pd.DataFrame(data=seqdata, columns=range(len(seqdata[0])))
                     except ValueError:
-                        # print(seqdata)
+                        print(seqdata)
                         raise ValueError
                     df.to_csv(currChunkSeqFile, sep="\t", index=False)
                     break
@@ -72,6 +72,8 @@ def getFileChunks(INPUT, fileChunkOutput):
 
 ########################### Main Function ###########################
 def main():
+    # These are the flags the user will use to tie input
+    # values like file paths and parameter values.
     parser = argparse.ArgumentParser(description='')
     parser.add_argument(
         '-i',
@@ -92,12 +94,15 @@ def main():
     args = parser.parse_args()
     
     # --- Input Argparse Variables ---
-    INPUT= Path(args.input)
-    OUTPUT= Path(args.output)
+    # We need a way to tie the inputs provided
+    # by the user to something we can use and 
+    # manipulate in our code.
+    INPUT = Path(args.input)
+    OUTPUT = Path(args.output)
     OUTPUT.mkdir(parents=True, exist_ok=True)
 
     """
-    Input file structure:
+    Input file structure: (Compara.102.protein_default.nh)
         - 'SEQ' data
         - 'DATA' header
         - Newick phylogenetic tree
@@ -108,7 +113,41 @@ def main():
 
     # Step 1: Parse file into chunks
     fileChunkOutput = OUTPUT / 'fileChunks'
-    fileChunks = getFileChunks(INPUT, fileChunkOutput)
+    currentChunk = 1
+    with open(INPUT) as fh:
+        phyloGroups = fh.read().split("//\n")
+        for count, group in enumerate(phyloGroups, 1):
+            if count % 10 == 0:
+                print(f"-- {count:,}/{len(phyloGroups):,} --")
+            seqlines = [l for l in group.split("\n") if l != '']
+            currChunkDir = fileChunkOutput / f"chunk_{currentChunk}"
+            currChunkDir.mkdir(parents=True, exist_ok=True)  # Make output directory
+            currChunkSeqFile = currChunkDir / f"chunk_{currentChunk}_SEQ.tsv"
+            currChunkTreeFile = currChunkDir / f"chunk_{currentChunk}_Newick.tree"
+            for i, l in enumerate(reversed(seqlines), 1):
+                if not l: # Skips blank lines
+                    continue
+                elif ';' in l:  # Write out newick file
+                    writeTreeFile(l, currChunkTreeFile)
+                    continue
+                elif "SEQ" in l:
+                    seqdata = [l.split(" ") for l in seqlines[:len(seqlines)-i]]
+                    avglen = sum([len(i) for i in seqdata]) / len(seqdata)
+                    print(avglen, max([len(i) for i in seqdata]), min([len(i) for i in seqdata]))
+
+                    for l in seqdata:
+                        if len(l) > 9:
+                            print(l)
+
+                    try:
+                        df = pd.DataFrame(data=seqdata, columns=range(len(seqdata[0])))
+                    except ValueError:
+                        # print(seqdata)
+                        raise ValueError
+                    df.to_csv(currChunkSeqFile, sep="\t", index=False)
+                    break
+            currentChunk += 1
+            continue
 
 
     return

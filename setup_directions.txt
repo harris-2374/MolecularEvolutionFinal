@@ -1,1 +1,1 @@
-Once you have Python installed, you will want to create a virtual enviornment.
+Once you have Python installed, you will want to create a virtual enviornment - 'python -m venv nameOfVenv'
