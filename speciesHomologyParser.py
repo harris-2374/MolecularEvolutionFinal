@@ -13,11 +13,15 @@ from pathlib import Path
 import pandas as pd
 
 """
-    Outline:
+    SOI = Species of interest
+
+    Outline for species homology file:
         1. Load files into pandas dataframes
         2. Filter dataframe
         3. Group data by 'gene_stable_id'
-        
+        4. Search for genes in genes-of-interest file
+        5. Output information with or w/out all speices (only keep species-of-interest if SOI file provided)
+
     Filters:
         1. Percent identity >= 50%
         2. 'homology_type' == 'ortholog_one2many' or 'ortholog_one2one'
@@ -72,6 +76,14 @@ def main():
         help='Species of interest list (single species name per line -- basic txt file)',
     )
     parser.add_argument(
+        '-g',
+        '--genes',
+        type=str,
+        action='store',
+        default=None,
+        help='Gene of interest',
+    )
+    parser.add_argument(
         '-p',
         type=int,
         action='store',
@@ -83,12 +95,25 @@ def main():
     # --- Input Argparse Variables ---
     INPUT = Path(args.input)
     OUTPUT = Path(args.output)
-    SPECIES = Path(args.species)
+    SPECIES = args.species
+    GENES = Path(args.genes)
     PERCENTID = int(args.p)
     logger.info(f"File Name: {INPUT.name}")
 
-    # Step 1: Load into dataframe
-    df = pd.read_csv(INPUT, sep='\t')  # sep='\t' tells pandas it is a tab delimited file (tsv)
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+
+    # Step 1: Load data into dataframes
+    # sep='\t' tells pandas it is a tab delimited file (tsv)
+    df = pd.read_csv(INPUT, sep='\t')
+    geneDF = pd.read_csv(GENES, names=['geneID', 'geneName'], sep='\t')
+    try:
+        species_path = Path(SPECIES)
+        if 'csv' in species_path.name:
+            speciesDF = pd.read_csv(species_path, sep='\t')
+        if 'xls' in species_path.name:
+            speciesDF = pd.read_excel(species_path)
+    except TypeError:
+        speciesDF = None
 
     # Step 2: Filter DataFrame
     length_before_filter = len(df)
@@ -105,22 +130,45 @@ def main():
     grouped_df = filtered_df.groupby(by=['gene_stable_id'])
     logger.info(f"Number of genes: {len(grouped_df):,}")
     
-    # Step 4: Run through each gene_stable_id
-    tally = 0  # Testing
+    # Step 4: Find genes of interest and output dataframe
+    # to a file.
     for gene, data in grouped_df:
-        print("\n===========================================")
-        print(f"Gene name: {gene}")
-        print(f"Number of entries: {len(data)}")
-        print(data)
-        print(data.homology_species)
-        print("===========================================\n")
-        
-        # Testing
-        if tally == 25:
-            break
-        tally += 1
-
-    return
+        if gene in geneDF['geneID'].to_list():
+            geneINFO = geneDF[geneDF['geneID'] == gene]  # Remove all dataframe entries besides the current gene of interest
+            geneINFO = geneINFO.reset_index(drop=True)   # Reset index so gene is at index position 0
+            assert len(geneINFO) == 1  # Make sure gene is not added to list twice
+            geneName = geneINFO['geneName'][0]
+            outFilename = OUTPUT / f'{geneName}_{gene}_results.tsv'
+            if not SPECIES:
+                # output data with all data
+                logger.info("\n===========================================")
+                logger.info(f"Gene name: {gene}")
+                logger.info(f"Number of entries: {len(data)}")
+                logger.info(data)
+                logger.info("===========================================\n")
+                
+                data.to_csv(outFilename, sep='\t', index=False)
+            else:
+                # Remove non-species of interest data
+                filteredDF = None
+                namesToRemove = pd.concat([data['homology_species'], speciesDF['scientific_name']])
+                namesToRemove = namesToRemove.drop_duplicates(keep=False)
+                for s in namesToRemove:
+                    filteredDF = data[data['homology_species'] != s]
+                logger.info("\n===========================================")
+                logger.info(f"Gene name: {gene}")
+                logger.info(f"Number of entries after filtering: {len(filteredDF)}")
+                logger.info(filteredDF)
+                logger.info("===========================================\n")
+                filteredDF.to_csv(outFilename, sep='\t', index=False)
+    # Exit script by removing output directory if it is empty
+    # If output directory is not empty, just exit the script
+    outputFiles = [f for f in OUTPUT.iterdir()]
+    if len(outputFiles) > 0:
+        return
+    else:
+        OUTPUT.rmdir()
+        return
 
 if __name__ == "__main__":
     main()

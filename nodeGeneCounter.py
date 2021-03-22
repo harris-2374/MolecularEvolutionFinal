@@ -11,6 +11,7 @@ from pathlib import Path
 
 ## Dependencies
 from ete3 import Tree
+import pandas as pd
 
 
 def main():
@@ -33,6 +34,14 @@ def main():
         default='./',
         help='',
     )
+    parser.add_argument(
+        '-s',
+        '--species',
+        type=str,
+        action='store',
+        default=None,
+        help='Species of interest list (single species name per line -- basic txt file)',
+    )
     args = parser.parse_args()
     
     # --- Input Argparse Variables ---
@@ -43,6 +52,17 @@ def main():
     """
     INPUT= Path(args.input)
     OUTPUT= Path(args.output)
+    SPECIES = args.species
+
+    try:
+        species_path = Path(SPECIES)
+        if 'csv' in species_path.name:
+            speciesDF = pd.read_csv(species_path, sep='\t')
+        if 'xls' in species_path.name:
+            speciesDF = pd.read_excel(species_path)
+    except TypeError:
+        speciesDF = None
+
 
     """
     This snipit does a few things at once.
@@ -70,8 +90,13 @@ def main():
     form of Newick called New Hampshire eXtended format (NHX).
     """
     for node in tree.traverse("postorder"):
-        # print(node.write())
-        # print(len(node.get_leaves()))
+        # for l in node.get_leaves():
+        #     for n, i in enumerate(speciesDF['ensembl_ID']):
+        #         print(i)
+        #         print(l.name)
+        #         if i in l.name:
+        #             speciesDF.at[n, 'ensembl_ID'] = l
+        # print(speciesDF)
         node.add_feature('numGenes', len(node.get_leaves()))
         continue
     
@@ -80,13 +105,14 @@ def main():
     explicitly telling the write function to include our
     calculated feature 'numGenes' in the Newick tree. 
     """
-    tree.write(outfile='nodeGeneCount_NHX.tree', features=['numGenes'])
+    tree.prune(speciesDF['scientific_name'].to_list(), preserve_branch_length=True)
+    tree.write(outfile='nodeGeneCount_NHX.tree', format=0, features=['numGenes'])
     
     """
     This just prints the ascii version of the tree.
     It will be pretty big, so may not be userful. 
     """
-    print(tree)
+    # print(tree)
 
     """
     If you want to look at this in a user interface,
