@@ -95,7 +95,7 @@ def main():
         '--output',
         type=str,
         action='store',
-        default='./output/',
+        default='./ensemblGeneFamily/',
         help='',
     )
     args = parser.parse_args()
@@ -147,7 +147,7 @@ def main():
                     df['Gene'] = df['Gene'].apply(lambda x: 'NULL' if not x else x) # Replace None with "NULL", None throws error
                     nullCount = df['Gene'].to_list().count('NULL')
                     for n, gene in enumerate(df['Gene']):
-                        if INPUT_GENE in gene:
+                        if INPUT_GENE.lower() in gene.lower():
                             currChunkDir = fileChunkOutput / f"chunk_{currentChunk}"
                             currChunkDir.mkdir(parents=True, exist_ok=True)  # Make output directory
                             currChunkSeqFile = currChunkDir / f"chunk_{currentChunk}_SEQ.tsv"

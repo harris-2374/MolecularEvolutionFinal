@@ -17,9 +17,9 @@ import pandas as pd
 
     Outline for species homology file:
         1. Load files into pandas dataframes
-        2. Filter dataframe
+        2. Filter dataframe (see filter section below)
         3. Group data by 'gene_stable_id'
-        4. Search for genes in genes-of-interest file
+        4. Search for genes from genes-of-interest file
         5. Output information with or w/out all speices (only keep species-of-interest if SOI file provided)
 
     Filters:
@@ -106,12 +106,13 @@ def main():
     # sep='\t' tells pandas it is a tab delimited file (tsv)
     df = pd.read_csv(INPUT, sep='\t')
     geneDF = pd.read_csv(GENES, names=['geneID', 'geneName'], sep='\t')
+    logger.info(f'Number of genes to search for: {len(geneDF)}')
     try:
         species_path = Path(SPECIES)
         if 'csv' in species_path.name:
             speciesDF = pd.read_csv(species_path, sep='\t')
         if 'xls' in species_path.name:
-            speciesDF = pd.read_excel(species_path)
+            speciesDF = pd.read_excel(species_path, engine='openpyxl')
     except TypeError:
         speciesDF = None
 
