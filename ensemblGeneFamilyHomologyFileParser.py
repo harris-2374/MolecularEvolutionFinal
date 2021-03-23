@@ -31,10 +31,10 @@ def getFileChunks(INPUT, fileChunkOutput):
     key value is a list of lines from the file """
     currentChunk = 1
     with open(INPUT) as fh:
-        geneGroups = fh.read().split("//\n")
-        for count, group in enumerate(geneGroups, 1):
+        geneFamily = fh.read().split("//\n")
+        for count, group in enumerate(geneFamily, 1):
             if count % 10 == 0:
-                print(f"-- {count:,}/{len(geneGroups):,} --")
+                print(f"-- {count:,}/{len(geneFamily):,} --")
             seqlines = [l for l in group.split("\n") if l != '']
             currChunkDir = fileChunkOutput / f"chunk_{currentChunk}"
             currChunkDir.mkdir(parents=True, exist_ok=True)  # Make output directory
@@ -83,6 +83,14 @@ def main():
         help="",
     )
     parser.add_argument(
+        '-o',
+        '--output',
+        type=str,
+        action='store',
+        default='./ensemblGeneFamily/',
+        help='',
+    )
+    parser.add_argument(
         '-g',
         '--INPUT_GENE',
         type=str,
@@ -91,12 +99,12 @@ def main():
         help="Comma separated list of INPUT_GENEs to search for [Replace spaces with underscores]",
     )
     parser.add_argument(
-        '-o',
-        '--output',
+        '-s',
+        '--species',
         type=str,
         action='store',
-        default='./ensemblGeneFamily/',
-        help='',
+        default=None,
+        help='Species of interest list (single species name per line -- basic txt file)',
     )
     args = parser.parse_args()
     
@@ -105,9 +113,22 @@ def main():
     # by the user to something we can use and 
     # manipulate in our code.
     INPUT = Path(args.input)
-    INPUT_GENE = args.INPUT_GENE
     OUTPUT = Path(args.output)
     OUTPUT.mkdir(parents=True, exist_ok=True)
+    SPECIES = args.species
+    INPUT_GENE = args.INPUT_GENE
+
+    # Load in species file
+    # I have it written to take an excel file
+    # or a csv file ¯\_(ツ)_/¯ 
+    try:
+        species_path = Path(SPECIES)
+        if 'csv' in species_path.name:
+            speciesDF = pd.read_csv(species_path, sep='\t')
+        if 'xls' in species_path.name:
+            speciesDF = pd.read_excel(species_path, engine='openpyxl')
+    except TypeError:
+        speciesDF = None
 
     """
     Input file structure: (Compara.102.protein_default.nh)
@@ -122,8 +143,8 @@ def main():
     fileChunkOutput = OUTPUT / f'{INPUT_GENE}'
     currentChunk = 1
     with open(INPUT) as fh:
-        geneGroups = fh.read().split("//\n")
-        for count, group in enumerate(geneGroups, 1):
+        geneFamily = fh.read().split("//\n")
+        for count, group in enumerate(geneFamily, 1):
             seqlines = [l for l in group.split("\n") if l != '']
             for i, l in enumerate(reversed(seqlines), 1):
                 if not l: # Skips blank lines
@@ -158,7 +179,7 @@ def main():
                             break
                     break
             if count % 1000 == 0:
-                print(f"-- {count:,}/{len(geneGroups):,} --")
+                print(f"-- {count:,}/{len(geneFamily):,} --")
             continue
     return
 
