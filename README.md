@@ -13,7 +13,6 @@
         2. Genes of interest lookup file (required)
         3. Species of interest lookup file (optional) 
             - Tab delimited columns of scientific_name, common_name, and enseml_ID
-            - If provided, the script will remove all data of species not found in the file
  ## ensemblGeneFamilyHomologyFileParser.py
     Summary:
         This script takes in an Ensembl gene family emf file and returns
@@ -25,6 +24,8 @@
     Input:
         1. Ensembl emf file (required)
         2. Gene of interest (required)
+        3. Species of interest lookup file (optional) 
+            - Tab delimited columns of scientific_name, common_name, and enseml_ID
 
  ## fetchEnsemblSequences.py
     Summary:
