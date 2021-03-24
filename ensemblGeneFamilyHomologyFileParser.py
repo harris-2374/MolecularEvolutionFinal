@@ -87,7 +87,7 @@ def main():
         '--output',
         type=str,
         action='store',
-        default='./ensemblGeneFamily/',
+        default='./ensemblGeneFamilyResults/',
         help='',
     )
     parser.add_argument(

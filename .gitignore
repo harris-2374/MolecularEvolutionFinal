@@ -123,6 +123,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.vscode/
 
+ensemblGeneFamilyResults/
+ensembl_sequences/
+speciesHomologyResults/
 
-output/

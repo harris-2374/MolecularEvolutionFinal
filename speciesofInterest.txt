@@ -1,4 +1,0 @@
-lynx_canadensis
-panthera_leo
-panthera_tigris
-felis_catus
