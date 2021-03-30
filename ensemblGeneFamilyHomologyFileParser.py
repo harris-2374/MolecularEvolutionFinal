@@ -199,10 +199,10 @@ def main():
         currentChunk = 1
         with open(INPUT) as fh:
             geneFamily = fh.read().split("//\n")
-            for count, group in enumerate(geneFamily, 1):
+            for group in geneFamily:
                 seqlines = [l for l in group.split("\n") if l != '']
                 for i, l in enumerate(reversed(seqlines), 1):
-                    if not l: # Skips blank lines
+                    if not l: # Skips blank lines if not caught
                         continue
                     elif ';' in l:
                         tree = l
@@ -218,12 +218,14 @@ def main():
                                 l[8:len(l)+1] = ['_'.join(l[8:len(l)+1])] 
                         try:
                             df = pd.DataFrame(data=seqdata, columns=['SEQ', 'Species', 'ProteinID', 'Chromosome', 'Start', 'Stop', 'gain-loss?', 'GeneID', 'Gene'])
+                            convertDict = {sn:cn for sn,cn in zip(speciesDF['scientific_name'], speciesDF['common_name'])}
+                            convertDict['None'] = None
+                            df['CommonName'] = [convertDict.get(str(g)) for g in df['Species']]
                         except:
                             # print(seqdata)
                             pass
                         df['Gene'] = df['Gene'].apply(lambda x: 'NULL' if not x else x) # Replace None with "NULL", None throws error
-                        nullCount = df['Gene'].to_list().count('NULL')
-                        for n, gene in enumerate(df['Gene']):
+                        for gene in df['Gene']:
                             if str(geneOfInterest).lower() == str(gene).lower():
                                 print(f"Data found for {geneOfInterest}")
                                 currChunkDir = fileChunkOutput / f"chunk_{currentChunk}"
@@ -233,7 +235,8 @@ def main():
                                 currChunkSciNameTreeFile = currChunkDir / f"chunk_{currentChunk}_ScientificName_Newick.tree"
                                 currChunkCommonNameTreeFile = currChunkDir / f"chunk_{currentChunk}_CommonName_Newick.tree"
                                 currChunkGeneTreeFile = currChunkDir / f"chunk_{currentChunk}_GeneName_Newick.tree"
-                                speciesGeneCount = currChunkDir / 'number_of_genes_per_species.txt'
+                                speciesScientificNameGeneCount = currChunkDir / 'number_of_genes_per_species_scientific_name.txt'
+                                speciesCommonNameGeneCount = currChunkDir / 'number_of_genes_per_species_common_name.txt'
                                 nullResult = currChunkDir / 'null_result.txt'
                                 malformedTree = currChunkDir / 'malformed_tree.txt'
                                 # Filter out non-species of interest entries
@@ -248,7 +251,8 @@ def main():
                                     writeTreeFile(Tree(tree).prune(df['ProteinID'].to_list(), preserve_branch_length=True), currChunkPidTreeFile)
                                     writeTreeFile(scientificNameTree, currChunkSciNameTreeFile)
                                     writeTreeFile(geneNameTree, currChunkGeneTreeFile)
-                                    writeSpeciesCountFile(speciesGeneCount, df['Species'].count())
+                                    writeSpeciesCountFile(speciesScientificNameGeneCount, df['Species'].value_counts())
+                                    writeSpeciesCountFile(speciesCommonNameGeneCount, df['CommonName'].value_counts())
                                     df.to_csv(currChunkSeqFile, sep="\t", index=False)
                                     currentChunk += 1
                                     break
@@ -269,24 +273,31 @@ def main():
                                         writeTreeFile('Malformed Tree!', malformedTree)
                                         currentChunk += 1
                                         break
+                                    
                                     # Convert tree leaves to scientific, common, and gene names
                                     scientificNameTree = make_scientific_name_tree(tree.write(), df)
                                     CommonNameTree = make_common_name_tree(scientificNameTree, speciesDF)
                                     geneNameTree = make_gene_name_tree(tree.write(), df)
+                                    
+                                    # Output all files
                                     writeTreeFile(tree.write(), currChunkPidTreeFile)
                                     writeTreeFile(scientificNameTree, currChunkSciNameTreeFile)
                                     writeTreeFile(CommonNameTree, currChunkCommonNameTreeFile)
                                     writeTreeFile(geneNameTree, currChunkGeneTreeFile)
-                                    writeSpeciesCountFile(speciesGeneCount, df['Species'].value_counts())
+                                    writeSpeciesCountFile(speciesScientificNameGeneCount, df['Species'].value_counts())
+                                    writeSpeciesCountFile(speciesCommonNameGeneCount, df['CommonName'].value_counts())
                                     # Output null file if no data present
                                     if df.empty:
                                         with open(nullResult, 'w') as oh:
                                             oh.write('No data available')
-
+                                            currentChunk += 1
+                                            break
                                     else:
                                         df.to_csv(currChunkSeqFile, sep="\t", index=False)
-                                    currentChunk += 1
-                                    break
+                                        currentChunk += 1
+                                        break
+                            else:
+                                continue
                         break
                 # File tracker
                 # if count % 10000 == 0:

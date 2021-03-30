@@ -2,5 +2,5 @@ speciesHomologyParser Command:
 python .\speciesHomologyParser.py -i "G:\My Drive\Class_Files\A_Fall_2021\Molecular_Evolution_FALL2021\Carnivore_group_final_project\Homology_Files\Felis_catus_Compara.102.protein_default.homologies.tsv" -s "speciesNameConverter.xlsx" -g "genes_of_interest.txt" -o "speciesHomologyResults/"
 
 ensemblGeneFamily Command:
-python .\ensemblGeneFamilyHomologyFileParser.py -i "G:\My Drive\Class_Files\A_Fall_2021\Molecular_Evolution_FALL2021\Carnivore_group_final_project\Gene_families\Compara.102.protein_default.nh.emf" -g ACTL6A
+python .\ensemblGeneFamilyHomologyFileParser.py -i "G:\My Drive\Class_Files\A_Fall_2021\Molecular_Evolution_FALL2021\Carnivore_group_final_project\Gene_families\Compara.102.protein_default.nh.emf" -o "ensemblGeneFamilyResultsUpdatedSpeciesCount" -g "genesToLookUp_trimmedGeneSet.txt" -s "speciesNameConverter.xlsx"
 
