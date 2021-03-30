@@ -1,0 +1,22 @@
+Resulting data only contained null values
+    SEQ                 Species           ProteinID      Chromosome      Start       Stop gain-loss?              GeneID  Gene
+3   SEQ         gorilla_gorilla  ENSGGOP00000014849              15     819773     833342         -1  ENSGGOG00000015216  NULL
+4   SEQ         pan_troglodytes  ENSPTRP00000044023              15    3797257    3830703          1  ENSPTRG00000006815  NULL
+5   SEQ         pan_troglodytes  ENSPTRP00000034634              2B   17462843   17509160          1  ENSPTRG00000022897  NULL
+7   SEQ            papio_anubis  ENSPANP00000016549      KZ097447.1       6747      56699         -1  ENSPANG00000020494  NULL
+8   SEQ         gorilla_gorilla  ENSGGOP00000035790               1  104982745  104983059          1  ENSGGOG00000042453  NULL
+11  SEQ         pan_troglodytes  ENSPTRP00000011644      KV420792.1     135570     174397          1  ENSPTRG00000012454  NULL
+12  SEQ     nomascus_leucogenys  ENSNLEP00000000997             22a   44950275   44980221         -1  ENSNLEG00000000857  NULL
+15  SEQ         cercocebus_atys  ENSCATP00000010007      KQ012259.1     222914     233355          1  ENSCATG00000029299  NULL
+19  SEQ         pan_troglodytes  ENSPTRP00000068869              14    3222582    3254915         -1  ENSPTRG00000050347  NULL
+24  SEQ     nomascus_leucogenys  ENSNLEP00000000993      GL397501.2     116462     138061          1  ENSNLEG00000030798  NULL
+32  SEQ         aotus_nancymaae  ENSANAP00000015268      KZ197751.1       2808      10057         -1  ENSANAG00000025515  NULL
+35  SEQ         pan_troglodytes  ENSPTRP00000069594              2B   16863985   16913211         -1  ENSPTRG00000024151  NULL
+37  SEQ      callithrix_jacchus  ENSCJAP00000046173  NTIC01007779.1   95510802   95531918         -1  ENSCJAG00000033335  NULL
+39  SEQ     macaca_fascicularis  ENSMFAP00000010204              12       5396      10792         -1  ENSMFAG00000006312  NULL
+43  SEQ         pan_troglodytes  ENSPTRP00000021321              14    3446814    3526495         -1  ENSPTRG00000020218  NULL
+46  SEQ            papio_anubis  ENSPANP00000023788              12     752452     768112          1  ENSPANG00000033167  NULL
+47  SEQ         gorilla_gorilla  ENSGGOP00000017630              2B   22403868   22452045         -1  ENSGGOG00000007645  NULL
+49  SEQ     macaca_fascicularis  ENSMFAP00000020785              12    1513787    1528080          1  ENSMFAG00000033345  NULL
+50  SEQ         pan_troglodytes  ENSPTRP00000046057              2B   17979727   18021109          1  ENSPTRG00000024298  NULL
+51  SEQ  mandrillus_leucophaeus  ENSMLEP00000031757      KN973316.1      67498     111429          1  ENSMLEG00000040078  NULL
