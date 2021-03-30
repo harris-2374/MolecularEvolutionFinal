@@ -30,8 +30,8 @@
  ## fetchEnsemblSequences.py
     Summary:
         This script utilizes the python Ensembl rest api to fetch fasta 
-        formatted nucleotide sequences and writes them to fasta format 
-        to given output directory. The input file consist of two tab 
+        formatted nucleotide sequences and writes them to fasta file 
+        in a provided output directory. The input file consist of two tab 
         delimeted columns where the first column is the Ensembl gene ID and 
         the other is a species identifier. 
 
