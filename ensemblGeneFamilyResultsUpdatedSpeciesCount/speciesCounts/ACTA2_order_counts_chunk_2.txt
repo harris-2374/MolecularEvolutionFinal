@@ -1,0 +1,16 @@
+primates          21
+carnivora         20
+rodentia          18
+artiodactyla      10
+lagomorpha         4
+perissodactyla     4
+eulipotyphyla      4
+chiroptera         2
+pilosa             2
+cingulata          2
+cetacea            2
+proboscidea        2
+scandentia         2
+hyracoidea         2
+afrosoricida       2
+Name: Order, dtype: int64

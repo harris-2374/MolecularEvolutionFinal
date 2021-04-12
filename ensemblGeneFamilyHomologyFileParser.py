@@ -218,9 +218,11 @@ def main():
                                 l[8:len(l)+1] = ['_'.join(l[8:len(l)+1])] 
                         try:
                             df = pd.DataFrame(data=seqdata, columns=['SEQ', 'Species', 'ProteinID', 'Chromosome', 'Start', 'Stop', 'gain-loss?', 'GeneID', 'Gene'])
-                            convertDict = {sn:cn for sn,cn in zip(speciesDF['scientific_name'], speciesDF['common_name'])}
-                            convertDict['None'] = None
-                            df['CommonName'] = [convertDict.get(str(g)) for g in df['Species']]
+                            CommonNameConvertDict = {sn:cn for sn,cn in zip(speciesDF['scientific_name'], speciesDF['common_name'])}
+                            CommonNameConvertDict['None'] = None
+                            df['CommonName'] = [CommonNameConvertDict.get(str(g)) for g in df['Species']]
+                            OrderConvertDict = {sn:order for sn,order in zip(speciesDF['scientific_name'], speciesDF['order'])}
+                            df['Order'] = [OrderConvertDict.get(str(g)) for g in df['Species']]
                         except:
                             # print(seqdata)
                             pass
@@ -228,6 +230,9 @@ def main():
                         for gene in df['Gene']:
                             if str(geneOfInterest).lower() == str(gene).lower():
                                 print(f"Data found for {geneOfInterest}")
+                                # Output File Names
+                                speciesCountOutput = OUTPUT / 'speciesCounts'
+                                speciesCountOutput.mkdir(parents=True, exist_ok=True)  # Make output directory
                                 currChunkDir = fileChunkOutput / f"chunk_{currentChunk}"
                                 currChunkDir.mkdir(parents=True, exist_ok=True)  # Make output directory
                                 currChunkSeqFile = currChunkDir / f"chunk_{currentChunk}_SEQ.tsv"
@@ -235,8 +240,9 @@ def main():
                                 currChunkSciNameTreeFile = currChunkDir / f"chunk_{currentChunk}_ScientificName_Newick.tree"
                                 currChunkCommonNameTreeFile = currChunkDir / f"chunk_{currentChunk}_CommonName_Newick.tree"
                                 currChunkGeneTreeFile = currChunkDir / f"chunk_{currentChunk}_GeneName_Newick.tree"
-                                speciesScientificNameGeneCount = currChunkDir / 'number_of_genes_per_species_scientific_name.txt'
-                                speciesCommonNameGeneCount = currChunkDir / 'number_of_genes_per_species_common_name.txt'
+                                speciesScientificNameGeneCount = speciesCountOutput / f'{geneOfInterest}_species_count_scientific_name_chunk_{currentChunk}.txt'
+                                speciesCommonNameGeneCount = speciesCountOutput / f'{geneOfInterest}_species_count_common_name_chunk_{currentChunk}.txt'
+                                orderGeneCount = speciesCountOutput / f'{geneOfInterest}_order_counts_chunk_{currentChunk}.txt'
                                 nullResult = currChunkDir / 'null_result.txt'
                                 malformedTree = currChunkDir / 'malformed_tree.txt'
                                 # Filter out non-species of interest entries
@@ -259,12 +265,14 @@ def main():
                                 else:
                                     # Remove species that are not in species of interest file
                                     df = drop_nonSPOI(df, speciesDF)
+                                    # Sort by Order
+                                    df = df.sort_values(by='Order')
                                     # If all species have NULL as gene, output null result file
                                     if (len(df['Gene'].unique()) == 1) and (df['Gene'].unique()[0] == 'NULL'):
                                         writeNullOutput(nullResult, df)
                                         break
                                     # This checks to make sure the newick tree is valid,
-                                    # if not then it will return a file telling the tree
+                                    # if not then it will return a file saying the tree
                                     # is malformed 
                                     try:
                                         tree = Tree(tree)
@@ -273,7 +281,6 @@ def main():
                                         writeTreeFile('Malformed Tree!', malformedTree)
                                         currentChunk += 1
                                         break
-                                    
                                     # Convert tree leaves to scientific, common, and gene names
                                     scientificNameTree = make_scientific_name_tree(tree.write(), df)
                                     CommonNameTree = make_common_name_tree(scientificNameTree, speciesDF)
@@ -286,6 +293,7 @@ def main():
                                     writeTreeFile(geneNameTree, currChunkGeneTreeFile)
                                     writeSpeciesCountFile(speciesScientificNameGeneCount, df['Species'].value_counts())
                                     writeSpeciesCountFile(speciesCommonNameGeneCount, df['CommonName'].value_counts())
+                                    writeSpeciesCountFile(orderGeneCount, df['Order'].value_counts())
                                     # Output null file if no data present
                                     if df.empty:
                                         with open(nullResult, 'w') as oh:
