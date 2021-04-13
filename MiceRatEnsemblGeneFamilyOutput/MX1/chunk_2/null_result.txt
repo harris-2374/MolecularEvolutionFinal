@@ -1,0 +1,4 @@
+Resulting data only contained null values
+                        Species           ProteinID  Gene              CommonName         Order
+166  cervus_hanglu_yarkandensis  ENSCHYP00000016255  NULL  central_asian_red_deer  artiodactyla
+259  cervus_hanglu_yarkandensis  ENSCHYP00000016796  NULL  central_asian_red_deer  artiodactyla

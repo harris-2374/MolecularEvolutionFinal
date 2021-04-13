@@ -1,0 +1,11 @@
+Gene	Species	CommonName	Order	SpeciesCopyNumber	OrderCopyNumber
+NULL	mandrillus_leucophaeus	drill	primates	2	14
+CST9	gorilla_gorilla	gorilla	primates	1	14
+NULL	macaca_fascicularis	crab_eating_macaque	primates	2	14
+NULL	cercocebus_atys	sooty_mangabey	primates	2	14
+CST9	pan_troglodytes	chimpanzee	primates	1	14
+CST9	callithrix_jacchus	white_tufted_ear_marmoset	primates	1	14
+CST9	carlito_syrichta	philippine_tarsier	primates	1	14
+NULL	papio_anubis	olive_baboon	primates	2	14
+CST9	nomascus_leucogenys	gibbon	primates	1	14
+CST9	aotus_nancymaae	mas_night_monkey	primates	1	14

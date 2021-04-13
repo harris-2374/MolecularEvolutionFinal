@@ -1,0 +1,8 @@
+Resulting data only contained null values
+                Species           ProteinID  Gene                    CommonName          Order
+15    echinops_telfairi  ENSETEP00000014546  NULL        lesser_hedgehog_tenrec   afrosoricida
+7         vulpes_vulpes  ENSVVUP00000035599  NULL                       red_fox      carnivora
+35    pteropus_vampyrus  ENSPVAP00000011180  NULL              large_flying_fox     chiroptera
+0         sorex_araneus  ENSSARP00000009278  NULL                european_shrew  eulipotyphyla
+2   erinaceus_europaeus  ENSEEUP00000014281  NULL     western_european_hedgehog  eulipotyphyla
+21  choloepus_hoffmanni  ENSCHOP00000003774  NULL  Hoffmanns_two_fingered_sloth         pilosa

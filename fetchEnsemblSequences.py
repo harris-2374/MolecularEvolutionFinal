@@ -58,19 +58,19 @@ def main():
     # Make output directory
     OUTPUT.mkdir(parents=True, exist_ok=True)
     # Collect geneID's
-    # File headers == ['gene_id', 'common_name']
-    genesToFind = pd.read_csv(INPUT, sep='\t')
-
+    genesToFind = pd.read_csv(INPUT, sep='\t', header=None)
+    
     for row in genesToFind.itertuples(index=False):
-        geneID, commonName = row
-        outFileName = OUTPUT / f"{commonName}_{geneID}.fasta"
+        # geneID, commonName = row
+        # outFileName = OUTPUT / f"{commonName}_{geneID}.fasta"
+        geneID = row
+        outFileName = OUTPUT / f"{geneID}.fasta"
         fasta_seq = ensembl_rest.sequence_id(geneID, headers={'content-type': 'text/x-fasta'})
         with open(outFileName, 'w') as oh:
             oh.write(fasta_seq)
+        # logger.info(f"CommonName: {commonName}\nGeneID: {geneID}\nSeqFile: {outFileName}")
         logger.info(f"CommonName: {commonName}\nGeneID: {geneID}\nSeqFile: {outFileName}")
         logger.info('----------------------------------------------------------------')
-
-
     return
 
 if __name__ == "__main__":

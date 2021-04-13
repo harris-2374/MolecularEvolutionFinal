@@ -1,0 +1,4 @@
+Resulting data only contained null values
+                Species           ProteinID  Gene                              CommonName          Order
+125       sorex_araneus  ENSSARP00000005665  NULL                          european_shrew  eulipotyphyla
+30   nannospalax_galili  ENSNGAP00000016185  NULL  upper_galilee_mountains_blind_mole_rat       rodentia

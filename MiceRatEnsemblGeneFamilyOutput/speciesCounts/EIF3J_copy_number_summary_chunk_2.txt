@@ -1,0 +1,2 @@
+Gene	Species	CommonName	Order	SpeciesCopyNumber	OrderCopyNumber
+Adh6	rattus_norvegicus	norway_rat	rodentia	1	1

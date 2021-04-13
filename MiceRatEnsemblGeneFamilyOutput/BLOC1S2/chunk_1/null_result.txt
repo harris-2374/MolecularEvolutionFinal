@@ -1,0 +1,15 @@
+Resulting data only contained null values
+                 Species           ProteinID  Gene                 CommonName     Order
+3     callithrix_jacchus  ENSCJAP00000068159  NULL  white_tufted_ear_marmoset  primates
+682   callithrix_jacchus  ENSCJAP00000078272  NULL  white_tufted_ear_marmoset  primates
+684   callithrix_jacchus  ENSCJAP00000071903  NULL  white_tufted_ear_marmoset  primates
+687   callithrix_jacchus  ENSCJAP00000068623  NULL  white_tufted_ear_marmoset  primates
+694   callithrix_jacchus  ENSCJAP00000069756  NULL  white_tufted_ear_marmoset  primates
+...                  ...                 ...   ...                        ...       ...
+347   callithrix_jacchus  ENSCJAP00000074097  NULL  white_tufted_ear_marmoset  primates
+346   callithrix_jacchus  ENSCJAP00000076800  NULL  white_tufted_ear_marmoset  primates
+343      gorilla_gorilla  ENSGGOP00000020193  NULL                    gorilla  primates
+364   callithrix_jacchus  ENSCJAP00000069340  NULL  white_tufted_ear_marmoset  primates
+1172     cercocebus_atys  ENSCATP00000037879  NULL             sooty_mangabey  primates
+
+[278 rows x 5 columns]

@@ -18,23 +18,6 @@ def writeTreeFile(data, filename):
     return
 
 
-def writeExcelSeqFile(data, filename):
-    df = pd.DataFrame()
-    index = 0
-    for l in data:
-        df.loc[index] = l
-        index += 1
-        continue
-    df.to_excel(filename, index=False)
-    return
-
-
-def writeSpeciesCountFile(speciesGeneCount, species_counts):
-    with open(speciesGeneCount, 'w') as oh:
-        oh.write(f"{species_counts}")
-        return
-
-
 def writeNullOutput(nullResult, df):
     with open(nullResult, 'w') as oh:
         oh.write('Resulting data only contained null values\n')
@@ -218,6 +201,7 @@ def main():
                                 l[8:len(l)+1] = ['_'.join(l[8:len(l)+1])] 
                         try:
                             df = pd.DataFrame(data=seqdata, columns=['SEQ', 'Species', 'ProteinID', 'Chromosome', 'Start', 'Stop', 'gain-loss?', 'GeneID', 'Gene'])
+                            df = df.drop(labels=['SEQ', 'gain-loss?', 'GeneID', 'Start', 'Stop', 'Chromosome'], axis=1)
                             CommonNameConvertDict = {sn:cn for sn,cn in zip(speciesDF['scientific_name'], speciesDF['common_name'])}
                             CommonNameConvertDict['None'] = None
                             df['CommonName'] = [CommonNameConvertDict.get(str(g)) for g in df['Species']]
@@ -240,8 +224,7 @@ def main():
                                 currChunkSciNameTreeFile = currChunkDir / f"chunk_{currentChunk}_ScientificName_Newick.tree"
                                 currChunkCommonNameTreeFile = currChunkDir / f"chunk_{currentChunk}_CommonName_Newick.tree"
                                 currChunkGeneTreeFile = currChunkDir / f"chunk_{currentChunk}_GeneName_Newick.tree"
-                                speciesScientificNameGeneCount = speciesCountOutput / f'{geneOfInterest}_species_count_scientific_name_chunk_{currentChunk}.txt'
-                                speciesCommonNameGeneCount = speciesCountOutput / f'{geneOfInterest}_species_count_common_name_chunk_{currentChunk}.txt'
+                                CountSummaryOutputFileName = speciesCountOutput / f'{geneOfInterest}_copy_number_summary_chunk_{currentChunk}.txt'
                                 orderGeneCount = speciesCountOutput / f'{geneOfInterest}_order_counts_chunk_{currentChunk}.txt'
                                 nullResult = currChunkDir / 'null_result.txt'
                                 malformedTree = currChunkDir / 'malformed_tree.txt'
@@ -253,12 +236,22 @@ def main():
                                     # Convert tree to scientific names
                                     scientificNameTree = make_scientific_name_tree(Tree(tree), df)
                                     geneNameTree = make_gene_name_tree(Tree(tree), df)
+
+                                    # Organize data into columns [geneID, Speceies, Order, SpeciesCopyNum, OrderCopyNum]
+                                    df = df.drop(labels=['ProteinID'], axis=1)
+                                    species_count_dict = {f:df['Species'].to_list().count(f) for f in df['Species'].unique()}
+                                    df['SpeciesCopyNumber'] = [species_count_dict[f] for f in df['Species']]
+                                    
+                                    order_count_dict = {f:df['Order'].to_list().count(f) for f in df['Order'].unique()}
+                                    df['OrderCopyNumber'] = [order_count_dict[f] for f in df['Order']]
+                                    df = df.drop_duplicates()
+                                    # Reorder columns
+                                    df = df[['Gene', 'Species', 'CommonName', 'Order', 'SpeciesCopyNumber', 'OrderCopyNumber']]
                                     # Output files
                                     writeTreeFile(Tree(tree).prune(df['ProteinID'].to_list(), preserve_branch_length=True), currChunkPidTreeFile)
                                     writeTreeFile(scientificNameTree, currChunkSciNameTreeFile)
                                     writeTreeFile(geneNameTree, currChunkGeneTreeFile)
-                                    writeSpeciesCountFile(speciesScientificNameGeneCount, df['Species'].value_counts())
-                                    writeSpeciesCountFile(speciesCommonNameGeneCount, df['CommonName'].value_counts())
+                                    df.to_csv(CountSummaryOutputFileName, sep='\t', index=False)
                                     df.to_csv(currChunkSeqFile, sep="\t", index=False)
                                     currentChunk += 1
                                     break
@@ -278,22 +271,33 @@ def main():
                                         tree = Tree(tree)
                                         tree.prune(df['ProteinID'].to_list(), preserve_branch_length=True)
                                     except TreeError:
-                                        writeTreeFile('Malformed Tree!', malformedTree)
+                                        writeTreeFile(tree, malformedTree)
                                         currentChunk += 1
                                         break
+                                    
                                     # Convert tree leaves to scientific, common, and gene names
                                     scientificNameTree = make_scientific_name_tree(tree.write(), df)
                                     CommonNameTree = make_common_name_tree(scientificNameTree, speciesDF)
                                     geneNameTree = make_gene_name_tree(tree.write(), df)
+
+                                    # Organize data into columns [geneID, Speceies, Order, SpeciesCopyNum, OrderCopyNum]
+                                    df = df.drop(labels=['ProteinID'], axis=1)
+                                    species_count_dict = {f:df['Species'].to_list().count(f) for f in df['Species'].unique()}
+                                    df['SpeciesCopyNumber'] = [species_count_dict[f] for f in df['Species']]
                                     
+                                    order_count_dict = {f:df['Order'].to_list().count(f) for f in df['Order'].unique()}
+                                    df['OrderCopyNumber'] = [order_count_dict[f] for f in df['Order']]
+                                    df = df.drop_duplicates()
+                                    # Reorder columns
+                                    df = df[['Gene', 'Species', 'CommonName', 'Order', 'SpeciesCopyNumber', 'OrderCopyNumber']]
+
                                     # Output all files
                                     writeTreeFile(tree.write(), currChunkPidTreeFile)
                                     writeTreeFile(scientificNameTree, currChunkSciNameTreeFile)
                                     writeTreeFile(CommonNameTree, currChunkCommonNameTreeFile)
                                     writeTreeFile(geneNameTree, currChunkGeneTreeFile)
-                                    writeSpeciesCountFile(speciesScientificNameGeneCount, df['Species'].value_counts())
-                                    writeSpeciesCountFile(speciesCommonNameGeneCount, df['CommonName'].value_counts())
-                                    writeSpeciesCountFile(orderGeneCount, df['Order'].value_counts())
+                                    df.to_csv(CountSummaryOutputFileName, sep='\t', index=False)
+
                                     # Output null file if no data present
                                     if df.empty:
                                         with open(nullResult, 'w') as oh:
