@@ -1,3 +1,0 @@
-Resulting data only contained null values
-               Species           ProteinID  Gene     CommonName       Order
-255  ochotona_princeps  ENSOPRP00000003331  NULL  american_pika  lagomorpha

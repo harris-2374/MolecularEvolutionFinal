@@ -1,4 +1,0 @@
-Resulting data only contained null values
-    SEQ            Species           ProteinID         Chromosome  Start   Stop gain-loss?              GeneID  Gene       CommonName
-55  SEQ  bison_bison_bison  ENSBBBP00000010540         KN264805.1  36026  40794         -1  ENSBBBG00000018636  NULL   american_bison
-91  SEQ  procavia_capensis  ENSPCAP00000014057  GeneScaffold_3914  13718  15397         -1  ENSPCAG00000015070  NULL  cape_rock_hyrax

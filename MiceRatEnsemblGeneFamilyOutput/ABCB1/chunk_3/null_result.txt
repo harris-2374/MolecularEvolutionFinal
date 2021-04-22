@@ -1,3 +1,0 @@
-Resulting data only contained null values
-            Species           ProteinID  Gene  CommonName      Order
-25  ursus_maritimus  ENSUMAP00000023908  NULL  polar_bear  carnivora

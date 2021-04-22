@@ -1,3 +1,0 @@
-Resulting data only contained null values
-                Species           ProteinID  Gene             CommonName      Order
-1  dasypus_novemcinctus  ENSDNOP00000019267  NULL  nine_banded_armadillo  cingulata

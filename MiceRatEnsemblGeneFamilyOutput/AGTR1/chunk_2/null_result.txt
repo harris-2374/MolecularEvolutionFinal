@@ -1,3 +1,0 @@
-Resulting data only contained null values
-                 Species           ProteinID  Gene     CommonName         Order
-415  camelus_dromedarius  ENSCDRP00005026957  NULL  arabian_camel  artiodactyla
