@@ -34,7 +34,7 @@ def main():
     args = parser.parse_args()
     INPUT = Path(args.input)
     OUTPUT = Path(args.output)    
-    
+
     aln = AlignIO.read(open(INPUT), "fasta")
     diff_df = pd.DataFrame(columns=['seqName', 'position', 'uniqueAA', 'allSampleBases'])
     df_idx = 0

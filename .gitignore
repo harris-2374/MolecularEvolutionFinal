@@ -125,7 +125,4 @@ dmypy.json
 .pyre/
 .vscode/
 
-# ensemblGeneFamilyResults/
-ensembl_sequences/
-# speciesHomologyResults/
-
+unused_scripts/
