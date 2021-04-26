@@ -44,15 +44,3 @@
         Excel file with fasta header of sample with variant of interest, the position in the alignment, 
         the altered amino acid and a string of all bases from each sample to verify script has worked correctly.  
 
- ## speciesHomologyParser.py (Ultimately not used in study)
-    Summary:
-        This script takes in an Ensembl species homology tsv file and returns
-        information for specific gene ID's. If a species
-        of interest file is provided, the script will remove all information
-        from any species not found in the lookup file.
-
-    Input:
-        1. Ensembl species holomology tsv file (required)
-        2. Genes of interest lookup file (required)
-        3. Species of interest lookup file (optional) 
-            - Tab delimited columns of scientific_name, common_name, and enseml_ID
