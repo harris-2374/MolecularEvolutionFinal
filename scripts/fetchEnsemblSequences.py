@@ -25,7 +25,7 @@ def main():
         type=str,
         action='store',
         required=True,
-        default='ensembl_gene_lookup_input.tsv',
+        # default='ensembl_gene_lookup_input.tsv',
         help="Excel/tsv file with gene name, common name, GeneID, and ProteinID",
     )
     parser.add_argument(
@@ -33,8 +33,7 @@ def main():
         '--gene',
         type=str,
         action='store',
-        required=True,
-        default='ensembl_gene_lookup_input.tsv',
+        # default='ensembl_gene_lookup_input.tsv',
         help="Ensembl gene name to look up",
     )
     parser.add_argument(
@@ -42,7 +41,7 @@ def main():
         '--output',
         type=str,
         action='store',
-        default='./ensembl_sequences',
+        # default='./ensembl_sequences',
         help='',
     )
     args = parser.parse_args()
@@ -51,6 +50,7 @@ def main():
     INPUT= Path(args.input)
     GENE = str(args.gene)
     OUTPUT= Path(args.output)
+    print(GENE, OUTPUT)
     GENE_OUTPUT = OUTPUT / 'GeneID' / GENE
     PROTEIN_OUTPUT = OUTPUT / 'ProteinID' / GENE
     GENE_LOG_OUTPUT = OUTPUT / 'gene_logs/'
