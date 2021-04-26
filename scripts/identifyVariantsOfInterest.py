@@ -42,7 +42,6 @@ def main():
         pos_data = aln[:, i]
         sample_names = [n.id for n in aln[:, i:i]]
         if (pos_data.count("-")/len(pos_data)) > 0.5:
-            # print(f"More than 50% of samples have missing data")
             continue
         elif len(list(set(pos_data))) > 2:
             continue
