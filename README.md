@@ -41,7 +41,8 @@
         Multi-alignment fasta file
     
     Output:
-        Excel file with fasta header of sample with variant of interest, the position in the alignment, the altered amino acid and a string of all bases from each sample to verify script has worked correctly.  
+        Excel file with fasta header of sample with variant of interest, the position in the alignment, 
+        the altered amino acid and a string of all bases from each sample to verify script has worked correctly.  
 
  ## speciesHomologyParser.py (Ultimately not used in study)
     Summary:
